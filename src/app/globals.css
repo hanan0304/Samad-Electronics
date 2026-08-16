@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+/* ---- Brand design tokens ------------------------------------------------ */
+/* "Trade Premium" — petrol teal foundation + copper accent.
+   Copper is the metal inside every wire, the brass of fittings and the warm
+   glow of fancy lights: a palette grounded in what the shop actually sells. */
+@theme {
+  /* Primary — petrol teal */
+  --color-brand: #0e5257;
+  --color-brand-dark: #0a3b3f;
+  --color-brand-darker: #072a2d;
+  --color-brand-light: #e7f0ef;
+  --color-brand-mid: #14707a;
+
+  /* Accent — copper */
+  --color-accent: #b45f2e;
+  --color-accent-dark: #97481f;
+  --color-accent-bright: #ce7a45;
+
+  /* Neutrals — warm, slightly teal-biased (chosen, not default grey) */
+  --color-ink: #16211f;
+  --color-muted: #5c6b67;
+  --color-line: #e5e3dc;
+  --color-paper: #f6f5f1;
+
+  /* Type — Bricolage Grotesque (display) + IBM Plex Sans (body).
+     The face variables are provided by next/font in layout.tsx. */
+  --font-sans: var(--font-body-face), "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-display-face), "Segoe UI Semibold", "Segoe UI", system-ui, sans-serif;
+
+  --radius-card: 1.125rem;
+
+  --shadow-sm: 0 1px 2px rgba(12, 40, 42, 0.05), 0 1px 3px rgba(12, 40, 42, 0.06);
+  --shadow-card: 0 1px 2px rgba(12, 40, 42, 0.05), 0 10px 26px rgba(12, 40, 42, 0.08);
+  --shadow-lg: 0 8px 20px rgba(12, 40, 42, 0.1), 0 24px 48px rgba(12, 40, 42, 0.12);
+}
+
+/* ---- Base --------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Confident, crafted headings use the display face site-wide. */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* ---- Ambient background --------------------------------------------------
+   A soft, very slowly drifting wash of the brand teal and copper sitting
+   behind every page, so large areas never read as flat white. Kept at low
+   opacity so product photos and text stay the focus. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 30rem at 12% 8%, rgba(14, 82, 87, 0.13), transparent 62%),
+    radial-gradient(38rem 26rem at 88% 18%, rgba(180, 95, 46, 0.11), transparent 62%),
+    radial-gradient(40rem 28rem at 70% 88%, rgba(20, 112, 122, 0.1), transparent 62%),
+    radial-gradient(34rem 24rem at 25% 75%, rgba(180, 95, 46, 0.07), transparent 62%);
+  animation: ambient-drift 34s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.5%, -1.5%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(-1.5%, 1.5%, 0) scale(1.03);
+  }
+}
+
+/* ---- Scroll reveal -------------------------------------------------------
+   Elements marked `data-reveal` fade and rise into place as they scroll in.
+   The hiding rule only applies once <ScrollReveal> has added `.js-reveal`,
+   so if JavaScript never runs the content is still fully visible. */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.js-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Brand marquee -------------------------------------------------------
+   The track holds the brand list twice, so sliding it exactly -50% lands the
+   copy where the original started — an invisible, seamless loop. */
+.marquee {
+  overflow: hidden;
+  /* Fade the strip out at both edges instead of cutting it off hard. */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 45s linear infinite;
+}
+.marquee-group {
+  display: flex;
+  flex: none;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  .marquee {
+    overflow-x: auto;
+  }
+  .js-reveal [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Consistent focus ring for accessibility */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* Nice default for the site container width */
+.container-page {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-page {
+    padding-inline: 1.5rem;
+  }
+}
+
+/* ---- Print ---------------------------------------------------------------
+   Used by the instant quotation so a customer can print or save a clean PDF:
+   only the quotation sheet survives, chrome and controls are dropped. */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  #quote-sheet {
+    box-shadow: none !important;
+    border: 1px solid #ddd;
+  }
+}
+
+/* Reusable prose block for SEO text sections */
+.prose-shop p {
+  margin-bottom: 0.75rem;
+  line-height: 1.75;
+}
+.prose-shop h2 {
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 1.25rem 0 0.5rem;
+  color: var(--color-brand-dark);
+}

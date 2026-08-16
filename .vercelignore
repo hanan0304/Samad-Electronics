@@ -1,0 +1,5 @@
+# Local env files — production values come from Vercel project settings
+.env
+.env.local
+.env.*.local
+scratch.prod.env
